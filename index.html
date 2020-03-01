@@ -1,0 +1,120 @@
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/assets/styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script
+      src="https://unpkg.com/react@16/umd/react.development.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
+      crossorigin
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.0/react-router-dom.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const App = () => {
+        const [notes, setNotes] = useState([]);
+        useEffect(() => {
+          const response = axios
+            .get('/api/notes')
+            .then(response => response.data)
+            .then(data => {
+              setNotes(data);
+            });
+        }, []);
+
+        const makeNote = async e => {
+          e.preventDefault();
+          console.log('handled');
+          console.dir(e.target);
+          console.dir(e.target[0].value);
+          await axios
+            .post('/api/notes', {
+              note: e.target[0].value,
+              color: e.target[1].value,
+            })
+            .then(response => setNotes([...notes, response.data]));
+          console.log(notes);
+        };
+
+        const destroyNote = async note => {
+          console.log('notes are', notes);
+          console.log('destroyed');
+          await axios.delete(`/api/notes/${note.id}`).then(response => {
+            const updatedNotes = notes.filter(
+              eachNote => eachNote.id !== note.id
+            );
+            setNotes(updatedNotes);
+          });
+        };
+
+        return (
+          <div className="app">
+            <h1>Sticky Notes App</h1>
+            <div className="Form">
+              <h3>Add a New Note</h3>
+              <form onSubmit={makeNote}>
+                Enter Note: <input className="form-control" />
+                <label>Choose a color:</label>
+                <select className="form-control" id="colors">
+                  <option value="aquamarine">Aquamarine</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="magenta">Magenta</option>
+                </select>
+                <button className="btn btn-secondary">Add Note</button>
+              </form>
+            </div>
+            <div className="wrapper-div">
+              <div className="note-cards">
+                {notes.map(note => {
+                  return (
+                    <div
+                      style={{ backgroundColor: note.color }}
+                      className="card"
+                      key={note.id}
+                    >
+                      <button className="x" onClick={() => destroyNote(note)}>
+                        <img src="assets/recycle.png" />
+                      </button>
+                      {note.note}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <footer>
+              {' '}
+              Icons made by{' '}
+              <a
+                href="https://www.flaticon.com/authors/freepik"
+                title="Freepik"
+              >
+                Freepik
+              </a>{' '}
+              from{' '}
+              <a href="https://www.flaticon.com/" title="Flaticon">
+                {' '}
+                www.flaticon.com
+              </a>
+            </footer>
+          </div>
+        );
+      };
+
+      const root = document.querySelector('#root');
+      ReactDOM.render(<App />, root);
+    </script>
+  </body>
+</html>
