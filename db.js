@@ -2,7 +2,7 @@ const pg = require('pg');
 const { Client } = pg;
 
 const client = new pg.Client(
-  process.env.DATABSAE_URL || 'postgres://localhost/sticky_notes_db'
+  process.env.DATABASE_URL || 'postgres://localhost/sticky_notes_db'
 );
 
 client.connect();
