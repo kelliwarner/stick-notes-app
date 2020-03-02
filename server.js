@@ -1,10 +1,3 @@
-// fix notes overlapping under delete button
-
-// unrelated -wtf is react router
-// make boiler plate app in github
-
-// work on linked in, focus more on testing/agile experience
-
 const express = require('express');
 const app = express();
 const port = 3000;

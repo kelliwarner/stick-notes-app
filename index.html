@@ -37,21 +37,15 @@
 
         const makeNote = async e => {
           e.preventDefault();
-          console.log('handled');
-          console.dir(e.target);
-          console.dir(e.target[0].value);
           await axios
             .post('/api/notes', {
               note: e.target[0].value,
               color: e.target[1].value,
             })
             .then(response => setNotes([...notes, response.data]));
-          console.log(notes);
         };
 
         const destroyNote = async note => {
-          console.log('notes are', notes);
-          console.log('destroyed');
           await axios.delete(`/api/notes/${note.id}`).then(response => {
             const updatedNotes = notes.filter(
               eachNote => eachNote.id !== note.id
@@ -85,10 +79,12 @@
                       className="card"
                       key={note.id}
                     >
-                      <button className="x" onClick={() => destroyNote(note)}>
-                        <img src="assets/recycle.png" />
-                      </button>
-                      {note.note}
+                      <div className="card-body">
+                        <button className="x" onClick={() => destroyNote(note)}>
+                          <img src="assets/recycle.png" />
+                        </button>
+                        {note.note}
+                      </div>
                     </div>
                   );
                 })}

@@ -38,11 +38,9 @@ const createNote = async note => {
 };
 
 const deleteNote = async id => {
-  console.log('delete note in data layer is being called');
   const SQL = `
   DELETE FROM notes WHERE (id)=$1 returning *`;
   const response = await client.query(SQL, [id]);
-  console.log(response.rows[0]);
   return response.rows[0];
 };
 
