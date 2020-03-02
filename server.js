@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const db = require('./db');
 const path = require('path');
 
 app.use(express.json());
+
+app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
 app.use((req, res, next) => {
   console.log(req.method, req.url);
